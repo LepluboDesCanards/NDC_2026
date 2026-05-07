@@ -13,6 +13,7 @@ class Jeu:
         self.spawnpoint = (self.w-8, self.h- self.h//3 - 16)
         pyxel.init(self.w, self.h, "NDC 2026")
         self.list_ennemis = []
+        pyxel.load("theme.pyxres")
         pyxel.mouse(True)
         pyxel.run(self.update, self.draw)
 
@@ -42,6 +43,14 @@ class Jeu:
             for y in range(self.h//2):
                 for x in range(self.w//2):
                     pyxel.rect(x*2, y*2, 2, 2, 3 if (x + y) % 2 == 0 else 11)
+
+            #chemin
+            pyxel.rect(10, 70, 140, 8, 10)
+            pyxel.rect(10, 42, 8, 28, 10)
+            pyxel.rect(10, 42, 106, 8, 10)
+            pyxel.rect(108, 14, 8, 28, 10)
+            pyxel.rect(10, 14, 106, 8, 10)
+            pyxel.rect(10, 0, 8, 22, 10)
 
             pyxel.rect(0, self.h - self.h // 3, self.w, self.h // 3, 0)
 
@@ -87,7 +96,6 @@ class Button:
         return (self.x <= pyxel.mouse_x < self.x + self.w) and (self.y <= pyxel.mouse_y < self.y + self.h)
 
     def draw(self):
-
         pyxel.rect(self.x, self.y, self.w, self.h, 5 if not self.is_mouse_over() else 7)
         pyxel.rectb(self.x, self.y, self.w, self.h, 1 if not self.is_mouse_over() else 6)
         pyxel.text(self.x + 2, self.y + 2, self.text, 7 if not self.is_mouse_over() else 0)
@@ -103,6 +111,7 @@ class Ennemi():
         self.type = type
         self.speed = 1
         self.x, self.y = (self.w-8, self.h - self.h//3 - 16)
+        self.vie = {"1": 10}
 
     def update(self):
         if self.y == 70:
@@ -119,7 +128,7 @@ class Ennemi():
             self.y -= self.speed
 
     def draw(self):
-        pyxel.rect(self.x, self.y, 8, 8, 8)
+        pyxel.blt(self.x, self.y, 0, 0, 0, 8, 8, 0, 0, 1)
 
 if __name__ == "__main__":
     Jeu(128, 128, 30)
