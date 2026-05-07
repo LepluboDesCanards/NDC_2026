@@ -1,0 +1,18 @@
+Duck Attack
+
+
+
+Comment jouer :
+
+Vous disposez dans la zone inférieure de l'écran d'une zone de gestion avec : 
+- d'une zone de gestion de tours
+- d'un bouton d'achat 
+- d'une poubelle (non-fonctionelle) 
+
+Sur le terrain se trouve : 
+- Un chemin sur lequel les ennemis se déplacent
+- Des emplacements afin de disposer vos tourelles
+
+Votre but :
+Empêcher les ennemis d'atteindre le bout du chemin en disposant vos tours afin de leur tirer dessus
+Vous disposez de 3 minutes durant lesquelles vous devez survivre face aux ennemis.
