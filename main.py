@@ -28,6 +28,9 @@ class Jeu:
         
         #update pos ennemis
         for ennemi in self.ennemis:
+            if ennemi.type == -1:
+                self.ennemis.remove(self)
+
             if ennemi.y <= -8:
                 self.isGameOver = True
             ennemi.update()
@@ -120,7 +123,6 @@ class Jeu:
         x = 4 + (10 * in_ui_towers)
         self.towers.append((Tower(x, y, 1, self), False))
 
-
 class Button:
     def __init__(self, x, y, text):
         self.x = x
@@ -148,9 +150,12 @@ class Ennemi():
         self.type = type
         self.speed = 0.5
         self.x, self.y = (self.w-8, self.h - self.h//3 - 16)
-        self.vie = {"1": 10}
 
     def update(self):
+
+        if pyxel.pget(self.x + 4, self.y + 4) == 8:
+            self.type = -1
+
         if self.y == 70:
             self.x -= self.speed
         if 42 < self.y <= 70 and self.x == 10:
@@ -197,11 +202,12 @@ class Tower:
     def update(self): 
         if self.active:
             if (pyxel.frame_count % 15) == 0:
-                self.tirs_liste = self.tirs_creation(self.x, self.y, self.tirs_liste)
+                self.tirs_liste.append([self.x+4, self.y-4])
                 self.tirs_liste = self.tirs_deplacement(self.tirs_liste)
                 if len(self.tirs_liste) > 1:
                     self.tirs_liste.pop(-1)
-                print(self.tirs_liste)
+            if (pyxel.frame_count % 150) == 0:
+                self.tirs_liste.append([self.x+4, self.y-4])
         else:
             if pyxel.btnr(pyxel.MOUSE_BUTTON_LEFT):
                 zone = self.is_over_zone()
@@ -219,13 +225,9 @@ class Tower:
                     self.x = self.place_x + 1
                     self.y = self.place_y + 1
 
-    def tirs_creation(self, x, y, tirs_liste):
-        tirs_liste.append([x+4, y-4])
-        return tirs_liste
-
     def tirs_deplacement(self, tirs_liste):
         for tir in self.tirs_liste:
-            tir[1] -= 1
+            tir[1] -= 2
             if tir[1]<-8:
                 self.tirs_liste.remove(tir)
         return self.tirs_liste
