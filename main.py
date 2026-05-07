@@ -38,6 +38,8 @@ class Jeu:
 
         self.towers = []
 
+        self.zones = [[20, 55, False], [56, 55, False], [96, 55, False], [20, 27, False], [56, 27, False], [96, 27, False]]
+
         pyxel.init(w, h, "NDC 2026", fps)
 
         pyxel.load("./theme.pyxres")
@@ -68,6 +70,15 @@ class Jeu:
         pyxel.rect(108, 14, 8, 28, 10)
         pyxel.rect(10, 14, 106, 8, 10)
         pyxel.rect(10, 0, 8, 22, 10)
+
+        # Zones de tours
+        pyxel.rect(20, 55, 10, 10, 10)
+        pyxel.rect(56, 55, 10, 10, 10)
+        pyxel.rect(96, 55, 10, 10, 10)
+
+        pyxel.rect(20, 27, 10, 10, 10)
+        pyxel.rect(56, 27, 10, 10, 10)
+        pyxel.rect(96, 27, 10, 10, 10)
 
         # Zone de merge
         pyxel.rect(2, self.h - self.h // 3 + 2, 62, 32, 10)
@@ -104,22 +115,34 @@ class Jeu:
             y = y = self.h - self.h // 3 + 3
 
         x = 4 + (10 * in_ui_towers)
-        self.towers.append((Tower(x, y, 1), False))
+        self.towers.append((Tower(x, y, 1, self), False))
 
 class Tower:
 
-    def __init__(self, x, y, lvl, active=False):
-        self.x = x
-        self.y = y
+    def __init__(self, x, y, lvl, game_state:Jeu, active=False):
+        self.x = self.place_x = x
+        self.y = self.place_y = y
         self.lvl = lvl
 
         self.hp = 10 * lvl
         self.dmg = 2 * lvl
 
         self.active = active
-    
+
+        self.game_state = game_state
+
     def is_mouse_over(self):
         return (self.x <= pyxel.mouse_x < self.x + 8) and (self.y <= pyxel.mouse_y < self.y + 8)
+
+
+    def is_over_zone(self):
+        free_zones = [(z[0], z[1]) for z in self.game_state.zones if not z[2]]
+
+        for z in free_zones:
+            if (z[0] < pyxel.mouse_x < z[0] + 10) and (z[1] < pyxel.mouse_y < z[1] + 10):
+                return z
+        return []
+
 
     def draw(self): 
         pyxel.blt(self.x, self.y, 0, 16, 8, 8, 8, 0)
@@ -130,9 +153,22 @@ class Tower:
         if self.active:
             pass
         else:
-            if pyxel.btn(pyxel.MOUSE_BUTTON_LEFT) and self.is_mouse_over():
-                self.x = pyxel.mouse_x - 4 
-                self.y = pyxel.mouse_y - 4
+            if pyxel.btnr(pyxel.MOUSE_BUTTON_LEFT):
+                zone = self.is_over_zone()
+                if zone != []:
+                    self.x = self.place_x = zone[0] + 1
+                    self.y = self.place_y = zone[1] + 1
+
+                    self.active = True
+                    
+            elif pyxel.btn(pyxel.MOUSE_BUTTON_LEFT):
+                if self.is_mouse_over():
+                    self.x = pyxel.mouse_x - 4 
+                    self.y = pyxel.mouse_y - 4
+                else:
+                    self.x = self.place_x + 1
+                    self.y = self.place_y + 1
+                    
 
 
 if __name__ == "__main__":
